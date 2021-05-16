@@ -44,10 +44,11 @@ Only the first is required.
 - background color
 - text style, see: `:h attr-list`
 
+#### example
 ```lua
--- ...
 hi('StatusLineNC', '#BDAE9D', '#432717')
 local line_bg = '#432717'
+
 require'ponton'.setup({
   line = {'active_mark_start', 'mode', 'buffer_name', 'buffer_changed',
     'read_only', 'git_branch', 'spacer', 'lsp_status', 'lsp_error',
