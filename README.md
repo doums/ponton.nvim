@@ -16,8 +16,9 @@ paq 'doums/ponton.nvim'
 
 The statusline is built from a serie of segments.\
 The list of segment is given by the `line` key of the config.\
+The order of the segments in this list will dictate the appearance of the status line, starting from left to right.\
 In ponton there is no arbitrary right, left or center sections.\
-It is up to the user to create sections as they see fit. Simply use the builtin segment `spacer` for that.
+It is up to the user to create sections as he sees fit. Simply use the builtin segment `spacer` for that.
 
 #### anatomy of a segment
 ```
