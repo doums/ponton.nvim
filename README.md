@@ -5,6 +5,7 @@ A light and **fast** statusline.
 Requires neovim 0.5+
 
 ### install
+
 Example with [paq-nvim](https://github.com/savq/paq-nvim/)
 ```lua
 -- ...
@@ -12,6 +13,36 @@ paq 'doums/ponton.nvim'
 ```
 
 ### configuration
+
+The statusline is built from a serie of segments.\
+The list of segment is given by the `line` key of the config.\
+In ponton there is no arbitrary right, left or center sections.\
+It is up to the user to create sections as they see fit. Simply use the builtin segment `spacer` for that.
+
+#### anatomy of a segment
+```
+-- << -- | ----- | -- >> --
+|  |  |  |   |   |  |  |  |
+M  D  P  F   O   S  P  D  M
+```
+caption:
+- `M` margin
+- `D` decorator
+- `P` padding
+- `F` prefix
+- `O` segment output
+- `S` suffix
+
+#### style
+Each segment can be styled with the `style` key.\
+`margin` and `decorator` can be styled with their own style too.
+
+In ponton, a style is a table list with 3 items max.\
+Only the first is required.
+- forground color (hexadecimal color)
+- background color
+- text style, see: `:h attr-list`
+
 ```lua
 -- ...
 hi('StatusLineNC', '#BDAE9D', '#432717')
