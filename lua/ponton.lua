@@ -7,6 +7,7 @@ local cmd = vim.cmd
 local api = vim.api
 local g = vim.g
 local uv = vim.loop
+local opt = vim.opt
 
 -- VARIABLES -----------------------------------------------------
 local ponton_config = nil
@@ -24,16 +25,6 @@ do
 end
 
 -- UTILS ---------------------------------------------------------
---[[ make buffer and window option global as well
-     TODO use vim.opt when released
-     see https://github.com/neovim/neovim/pull/13479 ]]
-local function opt(key, value, scope)
-  scope = scope or 'o'
-  local scopes = {o = vim.o, b = vim.bo, w = vim.wo}
-  scopes[scope][key] = value
-  if scope ~= 'o' then scopes['o'][key] = value end
-end
-
 local function hi(name, foreground, background, style)
   local fg = 'guifg='..(foreground or 'NONE')
   local bg = 'guibg='..(background or 'NONE')
@@ -152,7 +143,7 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
       end
     end
   end
-  opt('statusline', line, 'w')
+  opt.statusline = line
 end))
 
 local function parse_box(data, kind)
