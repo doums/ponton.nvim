@@ -6,16 +6,10 @@ local b = vim.b
 
 local M = {}
 
-function M.spacer()
-  return '%='
-end
+function M.spacer() return '%=' end
 
-function M.text(value)
-  return value or ''
-end
+function M.text(value) return value or '' end
 
-function M.git_branch()
-  return b.gitsigns_head or ''
-end
+function M.git_branch() return b.gitsigns_head or '' end
 
 return M

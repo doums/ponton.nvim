@@ -13,15 +13,13 @@ function M.buffer_name(config)
   local name = api.nvim_buf_get_name(0)
   if info[1].loclist == 1 then
     local size = fn.getloclist(0, {size = 1}).size
-    return 'loclist '..size
+    return 'loclist ' .. size
   end
   if info[1].quickfix == 1 then
     local size = fn.getqflist({id = 0, size = 1}).size
-    return 'quickfix '..size
+    return 'quickfix ' .. size
   end
-  if #name == 0 then
-    return config.segments.buffer_name.empty or ''
-  end
+  if #name == 0 then return config.segments.buffer_name.empty or '' end
   return fn.fnamemodify(name, ':t')
 end
 

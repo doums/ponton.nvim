@@ -6,11 +6,11 @@ local uv = vim.loop
 
 local M = {}
 
-M.async_load_providers = uv.new_async(vim.schedule_wrap(function ()
-  local buffer = require'ponton.provider_buffer'
-  local fileinfo = require'ponton.provider_fileinfo'
-  local lsp = require'ponton.provider_lsp'
-  local util = require'ponton.provider_util'
+M.async_load_providers = uv.new_async(vim.schedule_wrap(function()
+  local buffer = require 'ponton.provider_buffer'
+  local fileinfo = require 'ponton.provider_fileinfo'
+  local lsp = require 'ponton.provider_lsp'
+  local util = require 'ponton.provider_util'
   _G.ponton_providers = {
     mode = require'ponton.provider_mode'.mode,
     spacer = util.spacer,
