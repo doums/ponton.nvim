@@ -10,7 +10,9 @@ local M = {}
 
 function M.line(config)
   local row = api.nvim_win_get_cursor(0)[1]
-  if config.segments.line.left_adjusted then return string.format('%-2d', row) end
+  if config.segments.line.left_adjusted then
+    return string.format('%-2d', row)
+  end
   return string.format('%3d', row)
 end
 
@@ -25,17 +27,23 @@ end
 function M.line_percent()
   local row = api.nvim_win_get_cursor(0)[1]
   local count = api.nvim_buf_line_count(0)
-  if count == 0 then return '100%' end
+  if count == 0 then
+    return '100%'
+  end
   return string.format('%4d%%', 100 * row / count)
 end
 
-function M.filetype() return bo.filetype:upper() or '' end
+function M.filetype()
+  return bo.filetype:upper() or ''
+end
 
 function M.fileencode()
   local encode = #bo.fileencoding > 0 and bo.fileencoding or o.encoding
   return encode:upper() or ''
 end
 
-function M.fileformat() return bo.fileformat:upper() or '' end
+function M.fileformat()
+  return bo.fileformat:upper() or ''
+end
 
 return M

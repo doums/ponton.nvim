@@ -19,7 +19,9 @@ function M.buffer_name(config)
     local size = fn.getqflist({id = 0, size = 1}).size
     return 'quickfix ' .. size
   end
-  if #name == 0 then return config.segments.buffer_name.empty or '' end
+  if #name == 0 then
+    return config.segments.buffer_name.empty or ''
+  end
   return fn.fnamemodify(name, ':t')
 end
 

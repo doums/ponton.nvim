@@ -30,7 +30,9 @@ local function hi(name, foreground, background, style)
   local fg = 'guifg=' .. (foreground or 'NONE')
   local bg = 'guibg=' .. (background or 'NONE')
   local hi_command = string.format('hi %s %s %s', name, fg, bg)
-  if style then hi_command = string.format('%s gui=%s', hi_command, style) end
+  if style then
+    hi_command = string.format('%s gui=%s', hi_command, style)
+  end
   cmd(hi_command)
 end
 
@@ -59,7 +61,9 @@ end
 
 local function create_highlight()
   for name, s in pairs(ponton_config.segments) do
-    for _, v in ipairs(s.styles) do parse_style(v.style, v.name) end
+    for _, v in ipairs(s.styles) do
+      parse_style(v.style, v.name)
+    end
     if name == 'mode' then
       for kmode, vmode in pairs(s.map) do
         hi('Ponton_mode_' .. kmode, vmode[2][1], vmode[2][2], vmode[2][3])
@@ -95,10 +99,16 @@ local function segment(name)
   elseif ponton_providers[name] then
     segment_value = ponton_providers[name](ponton_config)
   end
-  if #segment_value == 0 then return '' end
-  if data.prefix then output = output .. data.prefix end
+  if #segment_value == 0 then
+    return ''
+  end
+  if data.prefix then
+    output = output .. data.prefix
+  end
   output = output .. segment_value
-  if data.suffix then output = output .. data.suffix end
+  if data.suffix then
+    output = output .. data.suffix
+  end
   if data.padding.right then
     output = output .. string.rep(' ', data.padding.right[1])
   end
@@ -139,15 +149,21 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
 end))
 
 local function parse_box(data, kind)
-  if not data then return {} end
+  if not data then
+    return {}
+  end
   local parsed = {}
   parsed.left = {}
   parsed.right = {}
   local parse_sub = function(sub, sub_data, i)
-    if not sub_data[i] then return nil end
+    if not sub_data[i] then
+      return nil
+    end
     if type(sub_data[i]) == kind then
       sub[1] = sub_data[i]
-      if vim.tbl_islist(sub_data[3]) then sub[2] = sub_data[3] end
+      if vim.tbl_islist(sub_data[3]) then
+        sub[2] = sub_data[3]
+      end
     elseif vim.tbl_islist(sub_data[i]) then
       sub[1] = sub_data[i][1]
       sub[2] = sub_data[i][2]
@@ -198,7 +214,9 @@ local function normalize_config(config)
   return config
 end
 
-local function update() async_update:send() end
+local function update()
+  async_update:send()
+end
 
 local function setup(config)
   ponton_config = normalize_config(config or default_config)
