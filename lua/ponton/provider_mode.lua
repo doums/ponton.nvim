@@ -9,19 +9,19 @@ local g = vim.g
 local M = {}
 
 local modes_map = {
-  {'^n', 'normal'},
-  {'^v', 'visual'},
-  {'^V', 'v_line'},
-  {'^', 'v_block'},
-  {'^s', 'select'},
-  {'^S', 'select'},
-  {'^', 'select'},
-  {'^i', 'insert'},
-  {'^R', 'replace'},
-  {'^c', 'command'},
-  {'^r', 'prompt'},
-  {'^!', 'shell_ex'},
-  {'^t', 'terminal'},
+  { '^n', 'normal' },
+  { '^v', 'visual' },
+  { '^V', 'v_line' },
+  { '^', 'v_block' },
+  { '^s', 'select' },
+  { '^S', 'select' },
+  { '^', 'select' },
+  { '^i', 'insert' },
+  { '^R', 'replace' },
+  { '^c', 'command' },
+  { '^r', 'prompt' },
+  { '^!', 'shell_ex' },
+  { '^t', 'terminal' },
 }
 
 function M.mode(config)
@@ -31,8 +31,9 @@ function M.mode(config)
   local mod = api.nvim_get_mode()
   for _, v in ipairs(modes_map) do
     if string.find(mod.mode, v[1]) then
-      cmd(string.format('hi! link %s %s', 'Ponton_mode_C',
-                        'Ponton_mode_' .. v[2]))
+      cmd(
+        string.format('hi! link %s %s', 'Ponton_mode_C', 'Ponton_mode_' .. v[2])
+      )
       return config.segments.mode.map[v[2]][1]
     end
   end

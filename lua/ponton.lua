@@ -11,11 +11,19 @@ local opt = vim.opt
 
 -- VARIABLES -----------------------------------------------------
 local ponton_config = nil
-local default_config = {segments = {}}
+local default_config = { segments = {} }
 local autocmd_events = {
-  'ColorScheme', 'FileType', 'BufWinEnter', 'BufReadPost', 'BufWritePost',
-  'WinEnter', 'BufEnter', 'SessionLoadPost', 'FileChangedShellPost',
-  'VimResized', 'TermOpen',
+  'ColorScheme',
+  'FileType',
+  'BufWinEnter',
+  'BufReadPost',
+  'BufWritePost',
+  'WinEnter',
+  'BufEnter',
+  'SessionLoadPost',
+  'FileChangedShellPost',
+  'VimResized',
+  'TermOpen',
 }
 
 _G.ponton_providers = {}
@@ -132,8 +140,11 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
       if name == 'spacer' then
         line = line .. ponton_providers.spacer()
       else
-        line = line .. [[%{luaeval('require("ponton").segment')]] .. '("' ..
-                 name .. '")}'
+        line = line
+          .. [[%{luaeval('require("ponton").segment')]]
+          .. '("'
+          .. name
+          .. '")}'
       end
       if data.decorator.right then
         line = line .. '%#' .. 'Ponton_' .. name .. '_decorator_right#'
@@ -181,7 +192,7 @@ local function parse_box(data, kind)
 end
 
 local function normalize_config(config)
-  local style_keys = {'decorator', 'margin', 'padding'}
+  local style_keys = { 'decorator', 'margin', 'padding' }
   for _, name in ipairs(config.line) do
     local data = config.segments[name]
     local tmp_segment = {}
@@ -191,10 +202,10 @@ local function normalize_config(config)
     tmp_segment.decorator = parse_box(data.decorator, 'string')
     config.segments[name] = vim.tbl_extend('force', data, tmp_segment)
     if data.style then
-      table.insert(data.styles, {name = name, style = data.style})
+      table.insert(data.styles, { name = name, style = data.style })
     end
     if name == 'mode' then
-      table.insert(data.styles, {name = 'mode', style = {}})
+      table.insert(data.styles, { name = 'mode', style = {} })
     end
     for _, v in ipairs(style_keys) do
       if tmp_segment[v].left and tmp_segment[v].left[2] then
@@ -225,12 +236,12 @@ local function setup(config)
 end
 
 local function augroup()
-  cmd 'augroup ponton'
-  cmd 'autocmd!'
+  cmd('augroup ponton')
+  cmd('autocmd!')
   for _, def in ipairs(autocmd_events) do
     cmd(string.format('autocmd %s * lua require"ponton".update()', def))
   end
-  cmd 'augroup END'
+  cmd('augroup END')
 end
 
-return {setup = setup, segment = segment, update = update, augroup = augroup}
+return { setup = setup, segment = segment, update = update, augroup = augroup }
