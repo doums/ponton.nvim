@@ -28,6 +28,35 @@ function M.filetype_set()
   return false
 end
 
+function M.is_special_buf()
+  return #bo.buftype > 0
+end
+
+function M.is_normal_buf()
+  return #bo.buftype == 0
+end
+
+function M.filetype_empty()
+  if #bo.filetype == 0 then
+    return true
+  end
+  return false
+end
+
+function M.buftype_not(buftype)
+  if type(buftype) == table then
+    return not vim.tbl_contains(buftype, bo.buftype)
+  end
+  return buftype ~= bo.buftype
+end
+
+function M.filetype_not(filetype)
+  if type(filetype) == table then
+    return not vim.tbl_contains(filetype, bo.filetype)
+  end
+  return filetype ~= bo.filetype
+end
+
 function M.is_read_only()
   if bo.readonly == true or bo.modifiable == false then
     return true

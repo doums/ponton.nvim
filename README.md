@@ -4,15 +4,16 @@ A light and **fast** statusline.
 
 Requires neovim 0.5+
 
-### install
+### Install
 
 Example with [paq-nvim](https://github.com/savq/paq-nvim/)
+
 ```lua
 -- ...
 paq 'doums/ponton.nvim'
 ```
 
-### configuration
+### Configuration
 
 The statusline is built from a serie of segments.\
 The list of segment is given by the `line` key of the config.\
@@ -20,13 +21,16 @@ The order of the segments in this list will dictate the appearance of the status
 In ponton there is no arbitrary right, left or center sections.\
 It is up to the user to create sections as he sees fit. Simply use the builtin segment `spacer` for that.
 
-#### anatomy of a segment
+#### Anatomy of a segment
+
 ```
 -- << -- | ----- | -- >> --
 |  |  |  |   |   |  |  |  |
 M  D  P  F   O   S  P  D  M
 ```
+
 caption:
+
 - `M` margin
 - `D` decorator
 - `P` padding
@@ -34,17 +38,20 @@ caption:
 - `O` segment output
 - `S` suffix
 
-#### style
+#### Style
+
 Each segment can be styled with the `style` key.\
 `margin` and `decorator` can be styled with their own style too.
 
 In ponton, a style is a table list with 3 items max.\
 Only the first is required.
+
 - forground color (hexadecimal color)
 - background color
 - text style, see: `:h attr-list`
 
 #### example
+
 ```lua
 hi('StatusLineNC', '#BDAE9D', '#432717')
 local line_bg = '#432717'
@@ -154,8 +161,10 @@ require'ponton'.setup({
 })
 ```
 
-### inspired by
+### Inspired by
+
 [galaxyline.nvim](https://github.com/glepnir/galaxyline.nvim)
 
-### license
+### License
+
 Mozilla Public License 2.0

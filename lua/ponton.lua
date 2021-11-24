@@ -123,11 +123,29 @@ local function segment(name)
   return output
 end
 
+local function check_conditions(conditions)
+  if not conditions then
+    return true
+  end
+  if type(conditions) == 'function' then
+    conditions = { conditions }
+  end
+  for _, condition in pairs(conditions) do
+    if type(condition) == 'function' and not condition() then
+      return false
+    end
+    if type(condition) == 'table' and not condition[1](condition[2]) then
+      return false
+    end
+  end
+  return true
+end
+
 local async_update = uv.new_async(vim.schedule_wrap(function()
   local line = ''
   for _, name in ipairs(ponton_config.line) do
     local data = ponton_config.segments[name]
-    if not data.condition or data.condition() then
+    if check_conditions(data.conditions) then
       if data.margin.left then
         line = line .. '%#' .. 'Ponton_' .. name .. '_margin_left#'
         line = line .. string.rep(' ', data.margin.left[1])
