@@ -2,32 +2,33 @@
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/. ]]
 
-local lsp = vim.lsp
+local d = vim.diagnostic
+local severity = d.severity
 
 local M = {}
 
-local function get_lsp_diagnostic(type)
+local function get_lsp_diagnostic(s)
   if vim.tbl_isempty(vim.lsp.buf_get_clients(0)) then
     return ''
   end
-  local count = lsp.diagnostic.get_count(0, type)
-  return count > 0 and tostring(count) or ''
+  local count = d.get(0, { severity = s })
+  return #count > 0 and tostring(#count) or ''
 end
 
 function M.lsp_error()
-  return get_lsp_diagnostic('Error')
+  return get_lsp_diagnostic(severity.ERROR)
 end
 
 function M.lsp_warning()
-  return get_lsp_diagnostic('Warning')
+  return get_lsp_diagnostic(severity.WARN)
 end
 
 function M.lsp_information()
-  return get_lsp_diagnostic('Information')
+  return get_lsp_diagnostic(severity.INFO)
 end
 
 function M.lsp_hint()
-  return get_lsp_diagnostic('Hint')
+  return get_lsp_diagnostic(severity.HINT)
 end
 
 return M
