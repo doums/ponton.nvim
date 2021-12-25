@@ -10,7 +10,7 @@ local uv = vim.loop
 local opt = vim.opt
 
 -- VARIABLES -----------------------------------------------------
-local ponton_config = nil
+local _config = nil
 local default_config = { segments = {} }
 local autocmd_events = {
   'ColorScheme',
@@ -68,7 +68,7 @@ local function parse_style(style, name)
 end
 
 local function create_highlight()
-  for name, s in pairs(ponton_config.segments) do
+  for name, s in pairs(_config.segments) do
     for _, v in ipairs(s.styles) do
       parse_style(v.style, v.name)
     end
@@ -82,7 +82,7 @@ local function create_highlight()
 end
 
 local function segment(name)
-  local data = ponton_config.segments[name]
+  local data = _config.segments[name]
   local output = ''
   for _, v in ipairs(data.styles) do
     if api.nvim_get_current_win() == tonumber(g.actual_curwin) then
@@ -105,7 +105,7 @@ local function segment(name)
   elseif data.fn then
     segment_value = data.fn(api.nvim_get_current_buf())
   elseif ponton_providers[name] then
-    segment_value = ponton_providers[name](ponton_config)
+    segment_value =  string.format('%s%s%s', ponton_providers[name]())
   end
   if #segment_value == 0 then
     return ''
@@ -143,8 +143,8 @@ end
 
 local async_update = uv.new_async(vim.schedule_wrap(function()
   local line = ''
-  for _, name in ipairs(ponton_config.line) do
-    local data = ponton_config.segments[name]
+  for _, name in ipairs(_config.line) do
+    local data = _config.segments[name]
     if check_conditions(data.conditions) then
       if data.margin.left then
         line = line .. '%#' .. 'Ponton_' .. name .. '_margin_left#'
@@ -177,78 +177,12 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
   opt.statusline = line
 end))
 
-local function parse_box(data, kind)
-  if not data then
-    return {}
-  end
-  local parsed = {}
-  parsed.left = {}
-  parsed.right = {}
-  local parse_sub = function(sub, sub_data, i)
-    if not sub_data[i] then
-      return nil
-    end
-    if type(sub_data[i]) == kind then
-      sub[1] = sub_data[i]
-      if vim.tbl_islist(sub_data[3]) then
-        sub[2] = sub_data[3]
-      end
-    elseif vim.tbl_islist(sub_data[i]) then
-      sub[1] = sub_data[i][1]
-      sub[2] = sub_data[i][2]
-    end
-    return sub
-  end
-  if type(data) == kind then
-    parsed.left[1] = data
-    parsed.right[1] = data
-  elseif vim.tbl_islist(data) then
-    parsed.left = parse_sub(parsed.left, data, 1)
-    parsed.right = parse_sub(parsed.right, data, 2)
-  end
-  return parsed
-end
-
-local function normalize_config(config)
-  local style_keys = { 'decorator', 'margin', 'padding' }
-  for _, name in ipairs(config.line) do
-    local data = config.segments[name]
-    local tmp_segment = {}
-    data.styles = {}
-    tmp_segment.padding = parse_box(data.padding, 'number')
-    tmp_segment.margin = parse_box(data.margin, 'number')
-    tmp_segment.decorator = parse_box(data.decorator, 'string')
-    config.segments[name] = vim.tbl_extend('force', data, tmp_segment)
-    if data.style then
-      table.insert(data.styles, { name = name, style = data.style })
-    end
-    if name == 'mode' then
-      table.insert(data.styles, { name = 'mode', style = {} })
-    end
-    for _, v in ipairs(style_keys) do
-      if tmp_segment[v].left and tmp_segment[v].left[2] then
-        table.insert(data.styles, {
-          name = name .. '_' .. v .. '_left',
-          style = tmp_segment[v].left[2],
-        })
-      end
-      if tmp_segment[v].right and tmp_segment[v].right[2] then
-        table.insert(data.styles, {
-          name = name .. '_' .. v .. '_right',
-          style = tmp_segment[v].right[2],
-        })
-      end
-    end
-  end
-  return config
-end
-
 local function update()
   async_update:send()
 end
 
 local function setup(config)
-  ponton_config = normalize_config(config or default_config)
+  _config = require('ponton.config').normalize(config or default_config)
   create_highlight()
   update()
 end
