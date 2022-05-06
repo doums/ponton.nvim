@@ -10,6 +10,10 @@ function M.spacer()
   return '%='
 end
 
+function M.void(config)
+  return string.format('%' .. config.segments.void.length .. 's', '')
+end
+
 function M.text(value)
   return value or ''
 end

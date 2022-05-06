@@ -34,14 +34,16 @@ do
 end
 
 -- UTILS ---------------------------------------------------------
-local function hi(name, foreground, background, style)
-  local fg = 'guifg=' .. (foreground or 'NONE')
-  local bg = 'guibg=' .. (background or 'NONE')
-  local hi_command = string.format('hi %s %s %s', name, fg, bg)
-  if style then
-    hi_command = string.format('%s gui=%s', hi_command, style)
+local function hl(name, fg, bg, style, sp)
+  local hl_map = { fg = fg, bg = bg, sp = sp }
+  if type(style) == 'string' then
+    hl_map[style] = 1
+  elseif type(style) == 'table' then
+    for _, v in ipairs(style) do
+      hl_map[v] = 1
+    end
   end
-  cmd(hi_command)
+  api.nvim_set_hl(0, name, hl_map)
 end
 
 local function li(target, source)
@@ -59,9 +61,9 @@ local function parse_style(style, name)
   else
     active = style
   end
-  hi(hi_c, active[1], active[2], active[3])
+  hl(hi_c, active[1], active[2], active[3])
   if inactive then
-    hi(hi_nc, inactive[1], inactive[2], inactive[3])
+    hl(hi_nc, inactive[1], inactive[2], inactive[3])
   else
     li(hi_nc, hi_c)
   end
@@ -74,7 +76,7 @@ local function create_highlight()
     end
     if name == 'mode' then
       for kmode, vmode in pairs(s.map) do
-        hi('Ponton_mode_' .. kmode, vmode[2][1], vmode[2][2], vmode[2][3])
+        hl('Ponton_mode_' .. kmode, vmode[2][1], vmode[2][2], vmode[2][3])
       end
       li('Ponton_mode_NC', 'Ponton_mode_inactive')
     end
