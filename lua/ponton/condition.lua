@@ -44,14 +44,14 @@ function M.filetype_empty()
 end
 
 function M.buftype_not(buftype)
-  if type(buftype) == table then
+  if type(buftype) == 'table' then
     return not vim.tbl_contains(buftype, bo.buftype)
   end
   return buftype ~= bo.buftype
 end
 
 function M.filetype_not(filetype)
-  if type(filetype) == table then
+  if type(filetype) == 'table' then
     return not vim.tbl_contains(filetype, bo.filetype)
   end
   return filetype ~= bo.filetype
