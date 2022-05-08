@@ -11,7 +11,14 @@ function M.spacer()
 end
 
 function M.void(config)
-  return string.format('%' .. config.segments.void.length .. 's', '')
+  local length = config.segments.void.length
+  if type(length) == 'string' then
+    -- length format is "number%", a percentage of screen width
+    local col = vim.o.columns
+    local i = tonumber(length:sub(1, -2)) / 100 * col
+    return string.format('%' .. i .. 's', '')
+  end
+  return string.format('%' .. length .. 's', '')
 end
 
 function M.text(value)
