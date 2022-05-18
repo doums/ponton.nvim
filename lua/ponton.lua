@@ -249,19 +249,26 @@ local function update()
   async_update:send()
 end
 
+local function create_autocmd()
+  local group_id = api.nvim_create_augroup('ponton', {})
+  api.nvim_create_autocmd(autocmd_events, {
+    group = group_id,
+    pattern = '*',
+    callback = function()
+      update()
+    end,
+  })
+end
+
 local function setup(config)
   ponton_config = normalize_config(config or default_config)
   create_highlight()
   update()
 end
 
-local function augroup()
-  cmd('augroup ponton')
-  cmd('autocmd!')
-  for _, def in ipairs(autocmd_events) do
-    cmd(string.format('autocmd %s * lua require"ponton".update()', def))
-  end
-  cmd('augroup END')
-end
-
-return { setup = setup, segment = segment, update = update, augroup = augroup }
+return {
+  setup = setup,
+  segment = segment,
+  update = update,
+  create_autocmd = create_autocmd,
+}

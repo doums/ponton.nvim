@@ -10,7 +10,7 @@ let g:ponton_loaded = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-lua require'ponton'.augroup()
+lua require'ponton'.create_autocmd()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
