@@ -57,6 +57,10 @@ function M.filetype_not(filetype)
   return filetype ~= bo.filetype
 end
 
+function M.win_not_floating()
+  return vim.api.nvim_win_get_config(0).relative == ''
+end
+
 function M.is_read_only()
   if bo.readonly == true or bo.modifiable == false then
     return true
