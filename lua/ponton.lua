@@ -10,7 +10,7 @@ local uv = vim.loop
 local opt = vim.opt
 
 -- VARIABLES -----------------------------------------------------
-local ponton_config = nil
+local _config = nil
 local default_config = { segments = {} }
 local autocmd_events = {
   'ColorScheme',
@@ -70,7 +70,7 @@ local function parse_style(style, name)
 end
 
 local function create_highlight()
-  for name, s in pairs(ponton_config.segments) do
+  for name, s in pairs(_config.segments) do
     for _, v in ipairs(s.styles) do
       parse_style(v.style, v.name)
     end
@@ -84,7 +84,7 @@ local function create_highlight()
 end
 
 local function segment(name)
-  local data = ponton_config.segments[name]
+  local data = _config.segments[name]
   local output = ''
   for _, v in ipairs(data.styles) do
     if api.nvim_get_current_win() == tonumber(g.actual_curwin) then
@@ -107,7 +107,9 @@ local function segment(name)
   elseif data.fn then
     segment_value = data.fn(api.nvim_get_current_buf())
   elseif ponton_providers[name] then
-    segment_value = ponton_providers[name](ponton_config)
+    segment_value = ponton_providers[name](_config)
+  elseif data.provider and ponton_providers[data.provider] then
+    segment_value = ponton_providers[data.provider](_config)
   end
   if #segment_value == 0 then
     return ''
@@ -143,40 +145,50 @@ local function check_conditions(conditions)
   return true
 end
 
-local async_update = uv.new_async(vim.schedule_wrap(function()
-  local line = ''
-  for _, name in ipairs(ponton_config.line) do
-    local data = ponton_config.segments[name]
+local function render(segments, hl_end)
+  local bar = ''
+  for _, name in ipairs(segments) do
+    local data = _config.segments[name]
     if check_conditions(data.conditions) then
       if data.margin.left then
-        line = line .. '%#' .. 'Ponton_' .. name .. '_margin_left#'
-        line = line .. string.rep(' ', data.margin.left[1])
+        bar = bar .. '%#' .. 'Ponton_' .. name .. '_margin_left#'
+        bar = bar .. string.rep(' ', data.margin.left[1])
       end
       if data.decorator.left then
-        line = line .. '%#' .. 'Ponton_' .. name .. '_decorator_left#'
-        line = line .. data.decorator.left[1]
+        bar = bar .. '%#' .. 'Ponton_' .. name .. '_decorator_left#'
+        bar = bar .. data.decorator.left[1]
       end
-      line = line .. '%#' .. 'Ponton_' .. name .. '#'
+      bar = bar .. '%#' .. 'Ponton_' .. name .. '#'
       if name == 'spacer' then
-        line = line .. ponton_providers.spacer()
+        bar = bar .. ponton_providers.spacer()
       else
-        line = line
-          .. [[%{luaeval('require("ponton").segment')]]
-          .. '("'
-          .. name
-          .. '")}'
+        bar = bar
+            .. [[%{luaeval('require("ponton").segment')]]
+            .. '("'
+            .. name
+            .. '")}'
       end
       if data.decorator.right then
-        line = line .. '%#' .. 'Ponton_' .. name .. '_decorator_right#'
-        line = line .. data.decorator.right[1]
+        bar = bar .. '%#' .. 'Ponton_' .. name .. '_decorator_right#'
+        bar = bar .. data.decorator.right[1]
       end
       if data.margin.right then
-        line = line .. '%#' .. 'Ponton_' .. name .. '_margin_right#'
-        line = line .. string.rep(' ', data.margin.right[1])
+        bar = bar .. '%#' .. 'Ponton_' .. name .. '_margin_right#'
+        bar = bar .. string.rep(' ', data.margin.right[1])
       end
     end
   end
-  opt.statusline = line
+  if hl_end then
+    bar = bar .. '%#' .. hl_end .. '#'
+  end
+  return bar
+end
+
+local async_update = uv.new_async(vim.schedule_wrap(function()
+  opt.statusline = render(_config.line)
+  if _config.winbar then
+    vim.opt_local.winbar = render(_config.winbar, 'WinBar')
+  end
 end))
 
 local function parse_box(data, kind)
@@ -211,9 +223,9 @@ local function parse_box(data, kind)
   return parsed
 end
 
-local function normalize_config(config)
+local function normalize_segments(config, segments)
   local style_keys = { 'decorator', 'margin', 'padding' }
-  for _, name in ipairs(config.line) do
+  for _, name in ipairs(segments) do
     local data = config.segments[name]
     local tmp_segment = {}
     data.styles = {}
@@ -245,6 +257,14 @@ local function normalize_config(config)
   return config
 end
 
+local function normalize_config(config)
+  config = normalize_segments(config, config.line)
+  if config.winbar then
+    config = normalize_segments(config, config.winbar)
+  end
+  return config
+end
+
 local function update()
   async_update:send()
 end
@@ -261,7 +281,7 @@ local function create_autocmd()
 end
 
 local function setup(config)
-  ponton_config = normalize_config(config or default_config)
+  _config = normalize_config(config or default_config)
   create_highlight()
   update()
 end
