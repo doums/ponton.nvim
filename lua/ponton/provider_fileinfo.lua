@@ -17,7 +17,7 @@ function M.line(config)
 end
 
 function M.column(config)
-  local col = api.nvim_win_get_cursor(0)[2] + 1
+  local col = vim.fn.col('.')
   if config.segments.column.left_adjusted then
     return string.format('%-2d', col)
   end
