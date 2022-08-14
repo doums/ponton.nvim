@@ -186,8 +186,8 @@ end
 
 local async_update = uv.new_async(vim.schedule_wrap(function()
   opt.statusline = render(_config.line)
-  if _config.winbar then
-    vim.opt_local.winbar = render(_config.winbar, 'WinBar')
+  if _config.winbar and api.nvim_win_get_config(0).relative == '' then
+    vim.wo.winbar = render(_config.winbar, 'WinBar')
   end
 end))
 
