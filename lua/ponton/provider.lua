@@ -28,6 +28,7 @@ M.async_load_providers = uv.new_async(vim.schedule_wrap(function()
     lsp_warning = lsp.lsp_warning,
     lsp_information = lsp.lsp_information,
     lsp_hint = lsp.lsp_hint,
+    lsp_has_error = lsp.lsp_has_error,
     git_branch = util.git_branch,
     void = util.void,
   }

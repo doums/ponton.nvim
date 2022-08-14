@@ -31,4 +31,9 @@ function M.lsp_hint()
   return get_lsp_diagnostic(severity.HINT)
 end
 
+function M.lsp_has_error(config)
+  local count = d.get(0, { severity = severity.ERROR })
+  return #count > 0 and config.segments.lsp_has_error.value or ''
+end
+
 return M
