@@ -7,6 +7,7 @@ local api = vim.api
 local b = vim.b
 local bo = vim.bo
 local lsp = vim.lsp
+local utils = require('ponton.utils')
 
 local M = {}
 
@@ -58,7 +59,7 @@ function M.filetype_not(filetype)
 end
 
 function M.win_not_floating()
-  return vim.api.nvim_win_get_config(0).relative == ''
+  return not utils.is_floating(0)
 end
 
 function M.is_read_only()

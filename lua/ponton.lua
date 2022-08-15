@@ -8,6 +8,7 @@ local api = vim.api
 local g = vim.g
 local uv = vim.loop
 local opt = vim.opt
+local utils = require('ponton.utils')
 
 -- VARIABLES -----------------------------------------------------
 local _config = nil
@@ -186,7 +187,11 @@ end
 
 local async_update = uv.new_async(vim.schedule_wrap(function()
   opt.statusline = render(_config.line)
-  if _config.winbar and api.nvim_win_get_config(0).relative == '' then
+  if _config.winbar
+      and not utils.is_floating(0)
+      and not utils.is_loclist(0)
+      and not utils.is_quickfix(0)
+  then
     vim.wo.winbar = render(_config.winbar, 'WinBar')
   end
 end))
