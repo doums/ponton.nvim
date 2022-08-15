@@ -189,8 +189,9 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
   opt.statusline = render(_config.line)
   if _config.winbar
       and not utils.is_floating(0)
-      and not utils.is_loclist(0)
-      and not utils.is_quickfix(0)
+      and not vim.bo.buftype == 'quickfix'
+      and not vim.bo.buftype == 'nofile'
+      and not vim.bo.buftype == 'terminal'
   then
     vim.wo.winbar = render(_config.winbar, 'WinBar')
   end
