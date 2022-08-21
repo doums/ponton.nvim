@@ -165,10 +165,10 @@ local function render(segments, hl_end)
         bar = bar .. ponton_providers.spacer()
       else
         bar = bar
-            .. [[%{luaeval('require("ponton").segment')]]
-            .. '("'
-            .. name
-            .. '")}'
+          .. [[%{luaeval('require("ponton").segment')]]
+          .. '("'
+          .. name
+          .. '")}'
       end
       if data.decorator.right then
         bar = bar .. '%#' .. 'Ponton_' .. name .. '_decorator_right#'
@@ -188,11 +188,12 @@ end
 
 local async_update = uv.new_async(vim.schedule_wrap(function()
   opt.statusline = render(_config.line)
-  if _config.winbar
-      and not utils.is_floating(0)
-      and bo.buftype ~= 'quickfix'
-      and bo.buftype ~= 'nofile'
-      and bo.buftype ~= 'terminal'
+  if
+    _config.winbar
+    and not utils.is_floating(0)
+    and bo.buftype ~= 'quickfix'
+    and bo.buftype ~= 'nofile'
+    and bo.buftype ~= 'terminal'
   then
     vim.wo.winbar = render(_config.winbar, 'WinBar')
   end
@@ -284,6 +285,11 @@ local function create_autocmd()
     callback = function()
       update()
     end,
+  })
+  api.nvim_create_autocmd('ColorScheme', {
+    group = group_id,
+    pattern = 'espresso',
+    callback = create_highlight,
   })
 end
 
