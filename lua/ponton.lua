@@ -78,7 +78,11 @@ local function create_highlight()
     end
     if name == 'mode' then
       for kmode, vmode in pairs(s.map) do
-        hl('Ponton_mode_' .. kmode, vmode[2][1], vmode[2][2], vmode[2][3])
+        if vmode[2] then
+          hl('Ponton_mode_' .. kmode, vmode[2][1], vmode[2][2], vmode[2][3])
+        else
+          li('Ponton_mode_' .. kmode, 'StatusLine')
+        end
       end
       li('Ponton_mode_NC', 'Ponton_mode_inactive')
     end
