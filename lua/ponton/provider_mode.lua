@@ -24,9 +24,9 @@ local modes_map = {
   { '^t', 'terminal' },
 }
 
-function M.mode(config)
+function M.mode(segment, config)
   if api.nvim_get_current_win() ~= tonumber(g.actual_curwin) then
-    return config.segments.mode.map.inactive[1]
+    return config.segments[segment].map.inactive[1]
   end
   local mod = api.nvim_get_mode()
   for _, v in ipairs(modes_map) do
@@ -34,7 +34,7 @@ function M.mode(config)
       cmd(
         string.format('hi! link %s %s', 'Ponton_mode_C', 'Ponton_mode_' .. v[2])
       )
-      return config.segments.mode.map[v[2]][1]
+      return config.segments[segment].map[v[2]][1]
     end
   end
   return 'unknown'

@@ -10,8 +10,8 @@ function M.spacer()
   return '%='
 end
 
-function M.void(config)
-  local length = config.segments.void.length
+function M.void(segment, config)
+  local length = config.segments[segment].length
   if type(length) == 'string' then
     -- length format is "number%", a percentage of screen width
     local col = vim.o.columns

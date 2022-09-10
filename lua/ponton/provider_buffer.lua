@@ -9,7 +9,7 @@ local utils = require('ponton.utils')
 
 local M = {}
 
-function M.buffer_name(config)
+function M.buffer_name(segment, config)
   local name = api.nvim_buf_get_name(0)
   if utils.is_loclist(0) then
     local size = fn.getloclist(0, { size = 1 }).size
@@ -20,22 +20,22 @@ function M.buffer_name(config)
     return 'quickfix ' .. size
   end
   if #name == 0 then
-    return config.segments.buffer_name.empty or ''
+    return config.segments[segment].empty or ''
   end
   return fn.fnamemodify(name, ':t')
 end
 
-function M.buffer_changed(config)
+function M.buffer_changed(segment, config)
   local info = fn.getbufinfo('')
   if info[1].changed == 1 then
-    return config.segments.buffer_changed.value or ''
+    return config.segments[segment].value or ''
   end
   return ''
 end
 
-function M.read_only(config)
+function M.read_only(segment, config)
   if bo.readonly == true or bo.modifiable == false then
-    return config.segments.read_only.value or ''
+    return config.segments[segment].value or ''
   end
   return ''
 end

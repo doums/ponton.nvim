@@ -8,17 +8,17 @@ local bo = vim.bo
 
 local M = {}
 
-function M.line(config)
+function M.line(segment, config)
   local row = api.nvim_win_get_cursor(0)[1]
-  if config.segments.line.left_adjusted then
+  if config.segments[segment].left_adjusted then
     return string.format('%-2d', row)
   end
   return string.format('%3d', row)
 end
 
-function M.column(config)
+function M.column(segment, config)
   local col = vim.fn.col('.')
-  if config.segments.column.left_adjusted then
+  if config.segments[segment].left_adjusted then
     return string.format('%-2d', col)
   end
   return string.format('%3d', col)

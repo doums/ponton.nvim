@@ -109,9 +109,9 @@ local function segment(name)
   elseif data.fn then
     segment_value = data.fn(api.nvim_get_current_buf())
   elseif ponton_providers[name] then
-    segment_value = ponton_providers[name](_config)
+    segment_value = ponton_providers[name](name, _config)
   elseif data.provider and ponton_providers[data.provider] then
-    segment_value = ponton_providers[data.provider](_config)
+    segment_value = ponton_providers[data.provider](name, _config)
   end
   if #segment_value == 0 then
     return ''
