@@ -23,4 +23,11 @@ function M.is_floating(win)
   return vim.api.nvim_win_get_config(win).relative ~= ''
 end
 
+function _G.close_win(data)
+  local status = pcall(api.nvim_win_close, data, false)
+  if not status then
+    vim.notify('cannot close last window, use :q', vim.log.levels.WARN)
+  end
+end
+
 return M

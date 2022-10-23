@@ -169,10 +169,10 @@ local function render(segments, hl_end)
         bar = bar .. ponton_providers.spacer()
       else
         bar = bar
-          .. [[%{luaeval('require("ponton").segment')]]
+          .. [[%{%luaeval('require("ponton").segment')]]
           .. '("'
           .. name
-          .. '")}'
+          .. '")%}'
       end
       if data.decorator.right then
         bar = bar .. '%#' .. 'Ponton_' .. name .. '_decorator_right#'

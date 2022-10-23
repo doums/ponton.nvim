@@ -29,4 +29,13 @@ function M.git_branch()
   return g.gitsigns_head or ''
 end
 
+function M.close_window(segment, config)
+  local icon = config.segments[segment].icon or '✗'
+  return '%'
+    .. vim.api.nvim_get_current_win()
+    .. '@v:lua.close_win@'
+    .. icon
+    .. '%X'
+end
+
 return M

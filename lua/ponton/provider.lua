@@ -10,14 +10,15 @@ M.async_load_providers = uv.new_async(vim.schedule_wrap(function()
   local buffer = require('ponton.provider_buffer')
   local fileinfo = require('ponton.provider_fileinfo')
   local lsp = require('ponton.provider_lsp')
-  local util = require('ponton.provider_util')
+  local utils = require('ponton.provider_utils')
   _G.ponton_providers = {
     mode = require('ponton.provider_mode').mode,
-    spacer = util.spacer,
+    spacer = utils.spacer,
     buffer_name = buffer.buffer_name,
     buffer_changed = buffer.buffer_changed,
+    close_window = utils.close_window,
     read_only = buffer.read_only,
-    text = util.text,
+    text = utils.text,
     line = fileinfo.line,
     column = fileinfo.column,
     line_percent = fileinfo.line_percent,
@@ -29,8 +30,8 @@ M.async_load_providers = uv.new_async(vim.schedule_wrap(function()
     lsp_information = lsp.lsp_information,
     lsp_hint = lsp.lsp_hint,
     lsp_has_error = lsp.lsp_has_error,
-    git_branch = util.git_branch,
-    void = util.void,
+    git_branch = utils.git_branch,
+    void = utils.void,
   }
   M.async_load_providers:close()
 end))
