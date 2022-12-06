@@ -30,7 +30,7 @@ function M.line_percent()
   if count == 0 then
     return '100%'
   end
-  return string.format('%4d%%', 100 * row / count)
+  return string.format('%4d%%%%', 100 * row / count)
 end
 
 function M.filetype()
