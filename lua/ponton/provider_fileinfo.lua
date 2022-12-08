@@ -33,17 +33,17 @@ function M.line_percent()
   return string.format('%4d%%%%', 100 * row / count)
 end
 
-function M.filetype()
-  return bo.filetype:upper() or ''
+function M.filetype(segment, config)
+  return bo.filetype:upper() or config.segments[segment].placeholder
 end
 
-function M.fileencode()
+function M.fileencode(segment, config)
   local encode = #bo.fileencoding > 0 and bo.fileencoding or o.encoding
-  return encode:upper() or ''
+  return encode:upper() or config.segments[segment].placeholder
 end
 
-function M.fileformat()
-  return bo.fileformat:upper() or ''
+function M.fileformat(segment, config)
+  return bo.fileformat:upper() or config.segments[segment].placeholder
 end
 
 return M

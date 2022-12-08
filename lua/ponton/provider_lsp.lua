@@ -7,33 +7,38 @@ local severity = d.severity
 
 local M = {}
 
-local function get_lsp_diagnostic(s)
+local function get_lsp_diagnostic(s, placeholder)
   if vim.tbl_isempty(vim.lsp.buf_get_clients(0)) then
-    return ''
+    return
   end
   local count = d.get(0, { severity = s })
-  return #count > 0 and tostring(#count) or ''
+  return #count > 0 and tostring(#count) or placeholder
 end
 
-function M.lsp_error()
-  return get_lsp_diagnostic(severity.ERROR)
+function M.lsp_error(segment, config)
+  local cfg = config.segments[segment]
+  return get_lsp_diagnostic(severity.ERROR, cfg.placeholder)
 end
 
-function M.lsp_warning()
-  return get_lsp_diagnostic(severity.WARN)
+function M.lsp_warning(segment, config)
+  local cfg = config.segments[segment]
+  return get_lsp_diagnostic(severity.WARN, cfg.placeholder)
 end
 
-function M.lsp_information()
-  return get_lsp_diagnostic(severity.INFO)
+function M.lsp_information(segment, config)
+  local cfg = config.segments[segment]
+  return get_lsp_diagnostic(severity.INFO, cfg.placeholder)
 end
 
-function M.lsp_hint()
-  return get_lsp_diagnostic(severity.HINT)
+function M.lsp_hint(segment, config)
+  local cfg = config.segments[segment]
+  return get_lsp_diagnostic(severity.HINT, cfg.placeholder)
 end
 
 function M.lsp_has_error(segment, config)
+  local cfg = config.segments[segment]
   local count = d.get(0, { severity = severity.ERROR })
-  return #count > 0 and config.segments[segment].value or ''
+  return #count > 0 and cfg.value or cfg.placeholder
 end
 
 return M

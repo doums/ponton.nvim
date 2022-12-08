@@ -117,7 +117,7 @@ local function segment(name)
   elseif data.provider and ponton_providers[data.provider] then
     segment_value = ponton_providers[data.provider](name, _config)
   end
-  if #segment_value == 0 then
+  if not segment_value then
     return ''
   end
   if data.prefix then
@@ -169,7 +169,9 @@ local function render(segments, hl_end)
         bar = bar .. ponton_providers.spacer()
       else
         bar = bar
-          .. [[%{%luaeval('require("ponton").segment')]]
+          .. '%'
+          .. (data.min_width or 0)
+          .. [[{%luaeval('require("ponton").segment')]]
           .. '("'
           .. name
           .. '")%}'

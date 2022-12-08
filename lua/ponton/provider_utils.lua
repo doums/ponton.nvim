@@ -25,8 +25,8 @@ function M.text(value)
   return value or ''
 end
 
-function M.git_branch()
-  return g.gitsigns_head or ''
+function M.git_branch(segment, config)
+  return g.gitsigns_head or config.segments[segment].placeholder
 end
 
 function M.close_window(segment, config)

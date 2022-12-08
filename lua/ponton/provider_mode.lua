@@ -37,7 +37,7 @@ function M.mode(segment, config)
       return config.segments[segment].map[v[2]][1]
     end
   end
-  return 'unknown'
+  return '�'
 end
 
 return M

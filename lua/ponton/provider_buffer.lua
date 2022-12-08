@@ -26,18 +26,20 @@ function M.buffer_name(segment, config)
 end
 
 function M.buffer_changed(segment, config)
+  local cfg = config.segments[segment]
   local info = fn.getbufinfo('')
   if info[1].changed == 1 then
-    return config.segments[segment].value or ''
+    return cfg.value or cfg.placeholder
   end
-  return ''
+  return cfg.placeholder
 end
 
 function M.read_only(segment, config)
+  local cfg = config.segments[segment]
   if bo.readonly == true or bo.modifiable == false then
-    return config.segments[segment].value or ''
+    return cfg.value or cfg.placeholder
   end
-  return ''
+  return cfg.placeholder
 end
 
 return M
