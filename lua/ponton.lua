@@ -197,7 +197,6 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
   if
     _config.winbar
     and not utils.is_floating(0)
-    and bo.buftype ~= 'quickfix'
     and bo.buftype ~= 'nofile'
     and bo.buftype ~= 'terminal'
   then
