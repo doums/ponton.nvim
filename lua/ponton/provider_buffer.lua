@@ -12,12 +12,12 @@ local M = {}
 function M.buffer_name(segment, config)
   local name = api.nvim_buf_get_name(0)
   if utils.is_loclist(0) then
-    local size = fn.getloclist(0, { size = 1 }).size
-    return 'loclist ' .. size
+    local ll = fn.getloclist(0, { size = true, title = true })
+    return (ll.title or 'll') .. ' ' .. ll.size
   end
   if utils.is_quickfix(0) then
-    local size = fn.getqflist({ id = 0, size = 1 }).size
-    return 'quickfix ' .. size
+    local qf = fn.getqflist({ id = 0, size = true, title = true })
+    return (qf.title or 'qf') .. ' ' .. qf.size
   end
   if #name == 0 then
     return config.segments[segment].empty or ''
