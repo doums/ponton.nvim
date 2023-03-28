@@ -8,7 +8,7 @@ local severity = d.severity
 local M = {}
 
 local function get_lsp_diagnostic(s, placeholder)
-  if vim.tbl_isempty(vim.lsp.buf_get_clients(0)) then
+  if vim.tbl_isempty(vim.lsp.get_active_clients({ bufnr = 0 })) then
     return
   end
   local count = d.get(0, { severity = s })

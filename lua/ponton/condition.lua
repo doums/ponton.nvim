@@ -82,7 +82,7 @@ function M.is_git_repository()
 end
 
 function M.has_active_lsp()
-  local clients = lsp.buf_get_clients(0)
+  local clients = lsp.get_active_clients({ bufnr = 0 })
   if next(clients) == nil then
     return false
   end
