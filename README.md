@@ -2,7 +2,7 @@
 
 A minimal statusline
 
-⚠ designed for my personal usage
+⚠ designed for my personal use
 
 ### Config
 
