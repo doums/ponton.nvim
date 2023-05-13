@@ -100,8 +100,8 @@ local function segment(name)
     end
   end
   if data.padding.left then
-    local padding = data.padding.left[1]
-    if not data.decorator.left and not data.margin.left then
+    local padding = data.padding.left
+    if not data.margin.left then
       -- for some reason nvim cuts the first space, add 1 to compensate
       padding = padding + 1
     end
@@ -128,7 +128,7 @@ local function segment(name)
     output = output .. data.suffix
   end
   if data.padding.right then
-    output = output .. string.rep(' ', data.padding.right[1])
+    output = output .. string.rep(' ', data.padding.right)
   end
   return output
 end
@@ -158,11 +158,7 @@ local function render(segments, hl_end)
     if check_conditions(data.conditions) then
       if data.margin.left then
         bar = bar .. '%#' .. 'Ponton_' .. name .. '_margin_left#'
-        bar = bar .. string.rep(' ', data.margin.left[1])
-      end
-      if data.decorator.left then
-        bar = bar .. '%#' .. 'Ponton_' .. name .. '_decorator_left#'
-        bar = bar .. data.decorator.left[1]
+        bar = bar .. string.rep(' ', data.margin.left)
       end
       bar = bar .. '%#' .. 'Ponton_' .. name .. '#'
       if name == 'spacer' then
@@ -176,13 +172,9 @@ local function render(segments, hl_end)
           .. name
           .. '")%}'
       end
-      if data.decorator.right then
-        bar = bar .. '%#' .. 'Ponton_' .. name .. '_decorator_right#'
-        bar = bar .. data.decorator.right[1]
-      end
       if data.margin.right then
         bar = bar .. '%#' .. 'Ponton_' .. name .. '_margin_right#'
-        bar = bar .. string.rep(' ', data.margin.right[1])
+        bar = bar .. string.rep(' ', data.margin.right)
       end
     end
   end
@@ -204,67 +196,29 @@ local async_update = uv.new_async(vim.schedule_wrap(function()
   end
 end))
 
-local function parse_box(data, kind)
+local function remap_box(data)
   if not data then
     return {}
   end
-  local parsed = {}
-  parsed.left = {}
-  parsed.right = {}
-  local parse_sub = function(sub, sub_data, i)
-    if not sub_data[i] then
-      return nil
-    end
-    if type(sub_data[i]) == kind then
-      sub[1] = sub_data[i]
-      if vim.tbl_islist(sub_data[3]) then
-        sub[2] = sub_data[3]
-      end
-    elseif vim.tbl_islist(sub_data[i]) then
-      sub[1] = sub_data[i][1]
-      sub[2] = sub_data[i][2]
-    end
-    return sub
-  end
-  if type(data) == kind then
-    parsed.left[1] = data
-    parsed.right[1] = data
-  elseif vim.tbl_islist(data) then
-    parsed.left = parse_sub(parsed.left, data, 1)
-    parsed.right = parse_sub(parsed.right, data, 2)
-  end
-  return parsed
+  return {
+    left = data[1],
+    right = data[2],
+  }
 end
 
 local function normalize_segments(config, segments)
-  local style_keys = { 'decorator', 'margin', 'padding' }
   for _, name in ipairs(segments) do
     local data = config.segments[name]
     local tmp_segment = {}
     data.styles = {}
-    tmp_segment.padding = parse_box(data.padding, 'number')
-    tmp_segment.margin = parse_box(data.margin, 'number')
-    tmp_segment.decorator = parse_box(data.decorator, 'string')
+    tmp_segment.padding = remap_box(data.padding)
+    tmp_segment.margin = remap_box(data.margin)
     config.segments[name] = vim.tbl_extend('force', data, tmp_segment)
     if data.style then
       table.insert(data.styles, { name = name, style = data.style })
     end
     if name == 'mode' then
       table.insert(data.styles, { name = 'mode', style = {} })
-    end
-    for _, v in ipairs(style_keys) do
-      if tmp_segment[v].left and tmp_segment[v].left[2] then
-        table.insert(data.styles, {
-          name = name .. '_' .. v .. '_left',
-          style = tmp_segment[v].left[2],
-        })
-      end
-      if tmp_segment[v].right and tmp_segment[v].right[2] then
-        table.insert(data.styles, {
-          name = name .. '_' .. v .. '_right',
-          style = tmp_segment[v].right[2],
-        })
-      end
     end
   end
   return config
@@ -301,6 +255,7 @@ end
 local function setup(config)
   _config = normalize_config(config or default_config)
   create_highlight()
+  create_autocmd()
   update()
 end
 
