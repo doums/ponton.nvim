@@ -7,7 +7,7 @@ local cmd = vim.cmd
 local api = vim.api
 local g = vim.g
 local bo = vim.bo
-local uv = vim.loop
+local uv = vim.uv
 local opt = vim.opt
 local utils = require('ponton.utils')
 
