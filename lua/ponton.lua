@@ -57,7 +57,7 @@ local function parse_style(style, name)
   local hi_c = string.format('Ponton_%s_C', name)
   local hi_nc = string.format('Ponton_%s_NC', name)
   local active, inactive
-  if vim.tbl_islist(style[1]) then
+  if vim.islist(style[1]) then
     active = style[1]
     inactive = style[2]
   else
