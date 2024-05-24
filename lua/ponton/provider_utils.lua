@@ -2,8 +2,6 @@
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/. ]]
 
-local g = vim.g
-
 local M = {}
 
 function M.spacer()
@@ -26,7 +24,7 @@ function M.text(value)
 end
 
 function M.git_branch(segment, config)
-  return g.gitsigns_head or config.segments[segment].placeholder
+  return vim.b.gitsigns_head or config.segments[segment].placeholder
 end
 
 function M.close_window(segment, config)

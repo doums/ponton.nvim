@@ -2,16 +2,8 @@
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/. ]]
 
--- ALIASES -------------------------------------------------------
-local cmd = vim.cmd
-local api = vim.api
-local g = vim.g
-local bo = vim.bo
-local uv = vim.uv
-local opt = vim.opt
 local utils = require('ponton.utils')
 
--- VARIABLES -----------------------------------------------------
 local _config = nil
 local default_config = { segments = {} }
 local autocmd_events = {
@@ -35,24 +27,22 @@ do
   end
 end
 
--- UTILS ---------------------------------------------------------
 local function hl(name, fg, bg, style, sp)
   local hl_map = { fg = fg, bg = bg, sp = sp }
   if type(style) == 'string' then
     hl_map[style] = 1
-  elseif type(style) == 'table' then
+  elseif vim.islist(style) then
     for _, v in ipairs(style) do
       hl_map[v] = 1
     end
   end
-  api.nvim_set_hl(0, name, hl_map)
+  vim.api.nvim_set_hl(0, name, hl_map)
 end
 
 local function li(target, source)
-  cmd(string.format('hi! link %s %s', target, source))
+  vim.api.nvim_set_hl(0, target, { link = source })
 end
 
--- CORE ----------------------------------------------------------
 local function parse_style(style, name)
   local hi_c = string.format('Ponton_%s_C', name)
   local hi_nc = string.format('Ponton_%s_NC', name)
@@ -63,9 +53,9 @@ local function parse_style(style, name)
   else
     active = style
   end
-  hl(hi_c, active[1], active[2], active[3])
+  hl(hi_c, active[1], active[2], active[3], active[4])
   if inactive then
-    hl(hi_nc, inactive[1], inactive[2], inactive[3])
+    hl(hi_nc, inactive[1], inactive[2], inactive[3], active[4])
   else
     li(hi_nc, hi_c)
   end
@@ -93,7 +83,7 @@ local function segment(name)
   local data = _config.segments[name]
   local output = ''
   for _, v in ipairs(data.styles) do
-    if api.nvim_get_current_win() == tonumber(g.actual_curwin) then
+    if vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin) then
       li('Ponton_' .. v.name, 'Ponton_' .. v.name .. '_C')
     else
       li('Ponton_' .. v.name, 'Ponton_' .. v.name .. '_NC')
@@ -111,7 +101,7 @@ local function segment(name)
   if data.text then
     segment_value = ponton_providers.text(data.text)
   elseif data.fn then
-    segment_value = data.fn(api.nvim_get_current_buf())
+    segment_value = data.fn(vim.api.nvim_get_current_buf())
   elseif ponton_providers[name] then
     segment_value = ponton_providers[name](name, _config)
   elseif data.provider and ponton_providers[data.provider] then
@@ -184,16 +174,17 @@ local function render(segments, hl_end)
   return bar
 end
 
-local async_update = uv.new_async(vim.schedule_wrap(function()
-  opt.statusline = render(_config.line)
+local async_update = vim.uv.new_async(vim.schedule_wrap(function()
+  vim.opt.statusline = render(_config.line)
   if
     _config.winbar
     and not utils.is_floating(0)
-    and bo.buftype ~= 'nofile'
-    and bo.buftype ~= 'terminal'
+    and vim.bo.buftype ~= 'nofile'
+    and vim.bo.buftype ~= 'terminal'
   then
     vim.wo.winbar = render(_config.winbar, 'WinBar')
   end
+  vim.api.nvim__redraw({ statusline = true, winbar = true })
 end))
 
 local function remap_box(data)
@@ -237,18 +228,24 @@ local function update()
 end
 
 local function create_autocmd()
-  local group_id = api.nvim_create_augroup('ponton', {})
-  api.nvim_create_autocmd(autocmd_events, {
+  local group_id = vim.api.nvim_create_augroup('ponton', {})
+  vim.api.nvim_create_autocmd(autocmd_events, {
     group = group_id,
     pattern = '*',
     callback = function()
       update()
     end,
   })
-  api.nvim_create_autocmd('ColorScheme', {
+  vim.api.nvim_create_autocmd('ColorScheme', {
     group = group_id,
-    pattern = 'espresso',
+    pattern = '*',
     callback = create_highlight,
+  })
+  vim.api.nvim_create_autocmd('User', {
+    pattern = { 'GitSignsChanged', 'GitSignsUpdate' },
+    callback = function()
+      update()
+    end,
   })
 end
 

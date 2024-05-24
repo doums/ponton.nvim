@@ -2,11 +2,9 @@
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/. ]]
 
-local uv = vim.uv
-
 local M = {}
 
-M.async_load_providers = uv.new_async(vim.schedule_wrap(function()
+M.async_load_providers = vim.uv.new_async(vim.schedule_wrap(function()
   local buffer = require('ponton.provider_buffer')
   local fileinfo = require('ponton.provider_fileinfo')
   local lsp = require('ponton.provider_lsp')
