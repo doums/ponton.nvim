@@ -19,6 +19,9 @@ function M.buffer_name(segment, config)
   if #name == 0 then
     return config.segments[segment].empty or ''
   end
+  if vim.bo.filetype == 'oil' then
+    return 'oil'
+  end
   return vim.fn.fnamemodify(name, ':t')
 end
 
